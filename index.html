@@ -226,6 +226,15 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
 .trend-item:nth-child(3) .trend-rank{background:#ffa502;color:#fff}
 .trend-title{flex:1;font-size:.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .trend-hot{font-size:.7rem;color:var(--text-muted);flex-shrink:0}
+.trends-filter{display:flex;gap:5px;padding:10px 16px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--border-light)}
+.trends-filter-chip{padding:3px 12px;border-radius:14px;font-size:.72rem;border:1px solid var(--border);color:var(--text-muted);
+  cursor:pointer;user-select:none;transition:all .2s var(--ease);white-space:nowrap}
+.trends-filter-chip:hover{border-color:var(--primary-light);color:var(--primary)}
+.trends-filter-chip.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 1px 4px rgba(99,102,241,.2)}
+.trends-search{flex:1;min-width:120px;max-width:200px;padding:4px 10px;border-radius:14px;font-size:.72rem;border:1px solid var(--border);
+  outline:none;transition:border-color .2s}
+.trends-search:focus{border-color:var(--primary)}
+.trends-search::placeholder{color:var(--text-muted)}
 .trends-footer{padding:10px 16px;border-top:1px solid var(--border-light);display:flex;align-items:center;
   justify-content:space-between;font-size:.75rem;color:var(--text-muted)}
 .trends-loading,.trends-error{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:.85rem}
@@ -329,9 +338,11 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
           <h4>🔥 平台热点</h4>
           <ul>
             <li>页面底部实时聚合展示抖音和微博热搜榜</li>
+            <li>支持按分类筛选热搜（二次元、娱乐、影视综、游戏等）</li>
+            <li>分类匹配不足时自动关联相近分类扩展结果</li>
+            <li>搜索框可输入自定义关键词实时过滤</li>
             <li>点击热搜条目可跳转到对应话题详情页</li>
-            <li>数据自动缓存 30 分钟，点击「刷新」获取最新数据</li>
-            <li>前三名以红色/橙色徽章高亮展示</li>
+            <li>数据自动缓存 30 分钟，点击「刷新」获取最新</li>
           </ul>
         </div>
         <div class="help-section">
@@ -395,6 +406,7 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
       <h3>🔥 平台热点</h3>
       <button class="btn btn-ghost btn-sm" onclick="clearAllTrendsCache();fetchAllTrends()">🔄 刷新</button>
     </div>
+    <div class="trends-filter" id="trendsFilter"></div>
     <div class="trends-grid">
       <div class="trends-column">
         <div class="trends-col-header">
@@ -593,6 +605,27 @@ function getHolidayInfo(dateStr) {
   return null;
 }
 
+const TREND_CATEGORIES = [
+  { id:'all',    name:'全部',   keywords:[], related:[] },
+  { id:'acg',    name:'二次元', related:['game','film'],
+    keywords:['动漫','番剧','漫画','coser','手办','二次元','声优','原神','崩铁','鸣潮','cos','B站','bilibili','新番','轻小说','柯南','海贼王','火影','鬼灭','进击','咒术','排球少年','间谍','葬送','药屋','jojo','龙珠','宝可梦','高达','假面骑士','奥特曼','初音','vtuber','holo','虚拟主播','同人','pixiv','米哈游','网易游戏','二游','抽卡','up主','弹幕','补番','追番','声控','日漫','国漫','国产动画'] },
+  { id:'ent',    name:'娱乐',   related:['film'],
+    keywords:['明星','演员','偶像','粉丝','恋情','官宣','离婚','热恋','出轨','塌房','红毯','颁奖','八卦','绯闻','爆料','恋爱','分手','结婚','蔡徐坤','肖战','王一博','杨幂','赵丽颖','迪丽热巴','顶流','流量','选秀','练习生','打call','应援','控评','超话','内娱','韩娱','爱豆','脱口秀','相声','喜剧','春晚','晚会','走红','翻车','人设','回应','道歉','代言','品牌'] },
+  { id:'film',   name:'影视综', related:['ent','acg'],
+    keywords:['电影','电视剧','综艺','导演','票房','上映','预告','剧集','开播','收视','杀青','定档','首映','演技','编剧','男主','女主','配角','烂片','好评','口碑','豆瓣','评分','院线','网剧','网大','短剧','韩剧','美剧','日剧','纪录片','动画电影','真人秀','选秀节目','脱口秀','相声','小品','春晚','跨年','颁奖典礼','奥斯卡','金鸡','百花','戛纳','威尼斯','拍摄','片场','花絮','翻拍','IP','续集'] },
+  { id:'game',   name:'游戏',   related:['acg','tech'],
+    keywords:['游戏','玩家','英雄联盟','LOL','王者荣耀','steam','PS5','手游','电竞','吃鸡','和平精英','赛事','战队','主播','直播','网游','switch','任天堂','索尼','微软','xbox','暴雪','腾讯游戏','网易游戏','米哈游','黑神话','悟空','GTA','绝地求生','永劫无间','第五人格','阴阳师','率土之滨','三国志','DNF','CF','CSGO','DOTA','炉石','暗黑','塞尔达','马里奥','宝可梦','开服','公测','内测','赛季','段位','排位','战绩','外挂','更新','版本','皮肤','抽卡'] },
+  { id:'tech',   name:'科技',   related:['game'],
+    keywords:['AI','人工智能','苹果','iPhone','华为','小米','手机','芯片','发布会','新品','数码','特斯拉','机器人','大模型','GPT','算法','deepseek','chatgpt','claude','openai','谷歌','微软','英伟达','台积电','三星','OPPO','vivo','荣耀','笔记本','平板','耳机','智能手表','可穿戴','5G','6G','量子','光刻机','半导体','新能源','电动车','自动驾驶','无人机','卫星','航天','火箭','科研','论文','诺贝尔','专利','开源','编程','程序员','互联网','大厂','裁员','加班'] },
+  { id:'sports', name:'体育',   related:[],
+    keywords:['足球','篮球','NBA','世界杯','奥运','冠军','比赛','决赛','联赛','进球','教练','球员','转会','中超','欧冠','女篮','男篮','乒乓','羽毛球','网球','游泳','田径','体操','跳水','举重','拳击','格斗','UFC','WWE','F1','赛车','滑雪','滑冰','马拉松','跑步','健身','瑜伽','梅西','C罗','詹姆斯','库里','姚明','全红婵','孙颖莎','樊振东','谷爱凌','苏翊鸣','国足','亚冠','亚运','全运会','运动员','金牌','银牌','铜牌','破纪录','淘汰','晋级','加时','点球','犯规','裁判','VAR'] },
+  { id:'social', name:'社会',   related:[],
+    keywords:['建议','两会','政府','政策','教育','医疗','房价','就业','工资','社保','退休','养老','生育','人口','高考','考研','公务员','代表','委员','提案','草案','立法','改革','调休','放假','补班','春运','疫情','地震','台风','洪水','救援','警方','法院','判决','嫌疑人','受害','诈骗','维权','投诉','曝光','辟谣','通报','回应','声明','央视','新华社','人民日报','热议','争议','网友'] },
+];
+let activeTrendCategory = 'all';
+let trendSearchQuery = '';
+let trendRawData = { douyin: null, weibo: null };
+
 const TRENDS_CACHE_KEY = 'marketing_trends_cache';
 const TRENDS_TTL = 30 * 60 * 1000;
 const TREND_APIS = {
@@ -620,6 +653,7 @@ function init() {
     document.getElementById('helpPanel').classList.add('expanded');
     localStorage.setItem('help_seen', '1');
   }
+  initTrendFilter();
   fetchAllTrends();
 }
 
@@ -1035,17 +1069,77 @@ function bindEvents() {
 
 /* ===== Utilities ===== */
 /* ===== Trends ===== */
+function initTrendFilter() {
+  const bar = document.getElementById('trendsFilter');
+  bar.innerHTML = TREND_CATEGORIES.map(c =>
+    `<span class="trends-filter-chip${c.id==='all'?' active':''}" data-cat="${c.id}" onclick="setTrendCategory('${c.id}',this)">${c.name}</span>`
+  ).join('') + `<input class="trends-search" type="text" placeholder="🔍 搜索关键词…" oninput="onTrendSearch(this.value)">`;
+}
+
+function setTrendCategory(cat, el) {
+  activeTrendCategory = cat;
+  document.querySelectorAll('.trends-filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  applyTrendFilter();
+}
+
+function onTrendSearch(q) {
+  trendSearchQuery = q.trim().toLowerCase();
+  applyTrendFilter();
+}
+
+function applyTrendFilter() {
+  ['douyin','weibo'].forEach(p => {
+    const container = document.getElementById(p + 'TrendsBody');
+    if (trendRawData[p]) renderTrendList(container, trendRawData[p]);
+  });
+}
+
+function matchKeywords(title, keywords) {
+  const t = title.toLowerCase();
+  return keywords.some(kw => t.includes(kw.toLowerCase()));
+}
+
+function filterTrendItems(data) {
+  const cat = TREND_CATEGORIES.find(c => c.id === activeTrendCategory);
+  let items = data;
+
+  if (cat && cat.keywords.length) {
+    const primary = data.filter(item => matchKeywords(item.title || item.name || item.word || '', cat.keywords));
+    if (primary.length >= 3) {
+      items = primary;
+    } else {
+      const relatedKws = (cat.related || []).flatMap(rid => {
+        const rc = TREND_CATEGORIES.find(c => c.id === rid);
+        return rc ? rc.keywords : [];
+      });
+      const allKws = [...cat.keywords, ...relatedKws];
+      const expanded = data.filter(item => matchKeywords(item.title || item.name || item.word || '', allKws));
+      items = expanded.length ? expanded : primary;
+    }
+  }
+
+  if (trendSearchQuery) {
+    items = items.filter(item => {
+      const t = (item.title || item.name || item.word || '').toLowerCase();
+      return t.includes(trendSearchQuery);
+    });
+  }
+  return items;
+}
+
 function fetchAllTrends() { fetchTrend('douyin'); fetchTrend('weibo'); }
 
 async function fetchTrend(platform) {
   const container = document.getElementById(platform + 'TrendsBody');
   const cached = getTrendsCache(platform);
-  if (cached) { renderTrendList(container, cached); updateTrendsTime(); return; }
+  if (cached) { trendRawData[platform] = cached; renderTrendList(container, cached); updateTrendsTime(); return; }
   container.innerHTML = '<div class="trends-loading"><div class="spinner"></div><div>加载中…</div></div>';
   try {
     const json = await fetchJSON(TREND_APIS[platform]);
     const items = json.data || json.list || [];
     if (items.length) {
+      trendRawData[platform] = items;
       setTrendsCache(platform, items);
       renderTrendList(container, items);
       updateTrendsTime();
@@ -1070,7 +1164,12 @@ function fmtHot(n) {
 }
 
 function renderTrendList(container, data) {
-  container.innerHTML = data.slice(0, 25).map((item, i) => {
+  const filtered = filterTrendItems(data);
+  if (!filtered.length) {
+    container.innerHTML = '<div class="trends-error" style="padding:30px 20px"><p>当前分类及相关分类暂无匹配热搜</p><p style="font-size:.72rem;margin-top:4px;color:var(--text-muted)">试试其他分类或使用搜索框</p></div>';
+    return;
+  }
+  container.innerHTML = filtered.slice(0, 30).map((item, i) => {
     const url = item.url || item.mobileUrl || item.mobilUrl || '#';
     const title = item.title || item.name || item.word || '';
     const hot = item.hot || item.hot_value || '';
