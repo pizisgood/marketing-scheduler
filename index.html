@@ -279,11 +279,56 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
   .event-bar{height:16px;line-height:16px;font-size:.6rem;padding:0 4px}
   .event-placeholder{height:16px}
 }
+
+/* ===== Auth (Supabase) ===== */
+#authScreen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#eef2ff 0%,#faf5ff 100%)}
+#authScreen.visible{display:flex}
+.auth-card{width:100%;max-width:380px;padding:32px;background:var(--surface);border-radius:16px;box-shadow:var(--shadow-xl)}
+.auth-card h2{font-size:1.35rem;margin-bottom:8px;text-align:center}
+.auth-card .auth-tip{font-size:.8rem;color:var(--text-muted);text-align:center;margin-bottom:24px}
+.auth-card .form-group{margin-bottom:16px}
+.auth-card .form-label{display:block;font-size:.85rem;font-weight:600;margin-bottom:6px;color:var(--text-secondary)}
+.auth-card input{padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);width:100%;font-size:1rem}
+.auth-card .auth-actions{display:flex;gap:10px;margin-top:20px}
+.auth-card .auth-actions .btn{flex:1}
+.auth-card .auth-switch{text-align:center;margin-top:16px;font-size:.85rem;color:var(--text-muted)}
+.auth-card .auth-switch a{color:var(--primary);cursor:pointer;text-decoration:none}
+.auth-card .auth-switch a:hover{text-decoration:underline}
+.auth-card .auth-error{margin-top:10px;font-size:.8rem;color:var(--danger);text-align:center}
+.auth-card .auth-guide{margin-top:20px;padding-top:16px;border-top:1px solid var(--border-light);font-size:.75rem;color:var(--text-muted);text-align:center}
+#mainApp{display:block}
+#mainApp.hidden{display:none}
+.auth-header-btn{font-size:.8rem;color:var(--text-muted)}
+.auth-header-btn:hover{color:var(--danger)}
 </style>
 </head>
 <body>
 
-<div class="app">
+<div id="authScreen">
+  <div class="auth-card">
+    <h2>📅 营销排期表</h2>
+    <p class="auth-tip">登录后数据将保存到云端，多设备同步</p>
+    <div class="form-group">
+      <label class="form-label">邮箱</label>
+      <input type="email" id="authEmail" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label class="form-label">密码</label>
+      <input type="password" id="authPassword" placeholder="至少 6 位" autocomplete="current-password">
+    </div>
+    <p class="auth-error" id="authError"></p>
+    <div class="auth-actions">
+      <button class="btn btn-primary" id="authSubmitBtn" onclick="authSubmit()">登录</button>
+      <button class="btn btn-ghost" onclick="toggleAuthMode()" id="authToggleBtn">去注册</button>
+    </div>
+    <div class="auth-switch">
+      <span id="authSwitchTip">还没有账号？</span> <a id="authSwitchLink" onclick="toggleAuthMode()">切换</a>
+    </div>
+    <p class="auth-guide">首次使用？请先阅读 <strong>SUPABASE_SETUP.md</strong> 配置 Supabase</p>
+  </div>
+</div>
+
+<div id="mainApp" class="app">
   <header class="header">
     <div class="header-brand">
       <div class="logo-icon">📅</div>
@@ -294,6 +339,7 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
       <button class="btn btn-ghost btn-sm" onclick="exportData()" title="导出数据">📤 导出</button>
       <button class="btn btn-ghost btn-sm" onclick="triggerImport()" title="导入数据">📥 导入</button>
       <button class="btn btn-primary" onclick="openModal()">＋ 新建排期</button>
+      <button class="btn btn-ghost btn-sm auth-header-btn" id="signOutBtn" style="display:none" onclick="authSignOut()">退出登录</button>
       <input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(event)">
     </div>
   </header>
@@ -346,18 +392,20 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
           </ul>
         </div>
         <div class="help-section">
-          <h4>📤 数据管理</h4>
+          <h4>📤 数据管理与登录</h4>
           <ul>
-            <li><b>导出</b>：将所有数据导出为 JSON 文件，可用于备份或分享</li>
-            <li><b>导入</b>：从 JSON 文件导入排期数据，会与现有数据合并</li>
-            <li>所有数据自动保存在浏览器本地，刷新不丢失</li>
+            <li><b>本地模式</b>：未配置 Supabase 时，数据保存在浏览器本地，刷新不丢失</li>
+            <li><b>云端登录</b>：按 <strong>SUPABASE_SETUP.md</strong> 配置后，可注册/登录，排期保存到云端、多设备同步</li>
+            <li>登录后右上角可点击「退出登录」切换账号；若排期同步失败，日历与热点仍会正常显示</li>
+            <li><b>导出</b>：将当前排期导出为 JSON 文件，可用于备份或分享</li>
+            <li><b>导入</b>：从 JSON 文件导入排期，会与当前数据合并（云端模式下会写入当前账号）</li>
           </ul>
         </div>
         <div class="help-section">
           <h4>⏰ 提醒与快捷键</h4>
           <ul>
             <li>创建排期时可设置提前提醒（5分钟~1天）</li>
-            <li>页面打开时自动检测并弹出浏览器通知提醒</li>
+            <li>页面打开时自动检测并弹出浏览器通知提醒（需允许通知权限）</li>
             <li>按 <b>Esc</b> 快速关闭任意弹窗</li>
             <li>点击弹窗外部半透明区域也可关闭弹窗</li>
           </ul>
@@ -522,7 +570,24 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
 
 <div class="toast-container" id="toastContainer"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+/* ===== Supabase 配置（请按 SUPABASE_SETUP.md 填写后启用云端登录）===== */
+(function() {
+  var SUPABASE_URL = 'https://bxiuczysymogylnzqjcc.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ4aXVjenlzeW1vZ3lsbnpxamNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NjI1MzMsImV4cCI6MjA4ODMzODUzM30.veK5FEQDeWxAqwIW-WPDNgP37huFAlNHe9oaEbk_Gw4';
+  window._useSupabase = SUPABASE_URL && SUPABASE_ANON_KEY && !SUPABASE_URL.includes('YOUR_');
+  window._supabaseClient = null;
+  if (window._useSupabase && typeof window.supabase !== 'undefined') {
+    window._supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+})();
+</script>
+<script>
+var useSupabase = window._useSupabase;
+var supabase = window._supabaseClient;
+var authMode = 'login';
+
 const PLATFORMS = [
   { id:'douyin',     name:'抖音',   color:'#000000' },
   { id:'xiaohongshu',name:'小红书', color:'#ff2442' },
@@ -638,16 +703,109 @@ let currentDate = new Date();
 let editingId = null;
 let activeFilter = 'all';
 let dragData = null;
+let currentUserId = null;
+
+/* ===== Auth (Supabase) ===== */
+function showAuthScreen() {
+  document.getElementById('authScreen').classList.add('visible');
+  document.getElementById('mainApp').classList.add('hidden');
+  document.getElementById('signOutBtn').style.display = 'none';
+}
+function showMainApp() {
+  document.getElementById('authScreen').classList.remove('visible');
+  document.getElementById('mainApp').classList.remove('hidden');
+  if (useSupabase) document.getElementById('signOutBtn').style.display = '';
+}
+function setAuthError(msg) {
+  document.getElementById('authError').textContent = msg || '';
+}
+function authSubmit() {
+  if (authMode === 'login') authLogin(); else authRegister();
+}
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  document.getElementById('authSwitchTip').textContent = authMode === 'login' ? '还没有账号？' : '已有账号？';
+  document.getElementById('authSwitchLink').textContent = authMode === 'login' ? '去注册' : '去登录';
+  const btn = document.getElementById('authSubmitBtn');
+  const toggleBtn = document.getElementById('authToggleBtn');
+  if (btn) btn.textContent = authMode === 'login' ? '登录' : '注册';
+  if (toggleBtn) toggleBtn.textContent = authMode === 'login' ? '去注册' : '去登录';
+  setAuthError('');
+}
+async function authLogin() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  setAuthError('');
+  if (!email || !password) { setAuthError('请填写邮箱和密码'); return; }
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) { setAuthError(error.message || '登录失败'); return; }
+  currentUserId = data.user.id;
+  showMainApp();
+  try { await loadData(); } catch (e) { schedules = []; showToast('排期同步失败', 'warning'); console.error(e); }
+  renderCalendar();
+  initTrendFilter();
+  fetchAllTrends();
+  showToast('登录成功', 'success');
+}
+async function authRegister() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  setAuthError('');
+  if (!email || !password) { setAuthError('请填写邮箱和密码'); return; }
+  if (password.length < 6) { setAuthError('密码至少 6 位'); return; }
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) { setAuthError(error.message || '注册失败'); return; }
+  currentUserId = data.user && data.user.id;
+  showMainApp();
+  try { await loadData(); } catch (e) { schedules = []; showToast('排期同步失败', 'warning'); console.error(e); }
+  renderCalendar();
+  initTrendFilter();
+  fetchAllTrends();
+  showToast('注册成功', 'success');
+}
+function authSignOut() {
+  if (supabase) supabase.auth.signOut();
+  currentUserId = null;
+  schedules = [];
+  showAuthScreen();
+  showToast('已退出登录', 'info');
+}
 
 /* ===== Init ===== */
 function init() {
-  loadData();
   renderPlatformOptions();
   renderStatusOptions();
-  renderCalendar();
   bindEvents();
   requestNotificationPermission();
   setInterval(checkReminders, 30000);
+
+  if (useSupabase && supabase) {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) { showAuthScreen(); return; }
+      currentUserId = session.user.id;
+      showMainApp();
+      try {
+        await loadData();
+      } catch (e) {
+        schedules = [];
+        if (typeof showToast === 'function') showToast('排期同步失败，请检查网络或 Supabase 表配置', 'warning', 6000);
+        console.error('loadData failed:', e);
+      }
+      renderCalendar();
+      updateStats();
+      checkReminders();
+      if (!localStorage.getItem('help_seen')) {
+        document.getElementById('helpPanel').classList.add('expanded');
+        localStorage.setItem('help_seen', '1');
+      }
+      initTrendFilter();
+      fetchAllTrends();
+    });
+    return;
+  }
+
+  loadData();
+  renderCalendar();
   checkReminders();
   if (!localStorage.getItem('help_seen')) {
     document.getElementById('helpPanel').classList.add('expanded');
@@ -657,19 +815,35 @@ function init() {
   fetchAllTrends();
 }
 
-function loadData() {
+async function loadData() {
+  if (useSupabase && supabase && currentUserId) {
+    try {
+      const { data, error } = await supabase.from('schedules').select('*').eq('user_id', currentUserId).order('start_date');
+      if (error) throw error;
+      schedules = (data || []).map(row => ({
+        id: row.id,
+        title: row.title,
+        platforms: row.platforms || [],
+        startDate: row.start_date,
+        endDate: row.end_date,
+        scheduledTime: row.scheduled_time || '',
+        reminderMinutes: row.reminder_minutes || 0,
+        status: row.status || 'pending',
+        assignee: row.assignee || '',
+        description: row.description || '',
+        reminded: row.reminded || false,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
+      }));
+    } catch { schedules = []; }
+    return;
+  }
   try {
     let raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      raw = localStorage.getItem('marketing_schedules_v1');
-    }
+    if (!raw) raw = localStorage.getItem('marketing_schedules_v1');
     schedules = raw ? JSON.parse(raw) : [];
     schedules.forEach(s => {
-      if (s.scheduledDate && !s.startDate) {
-        s.startDate = s.scheduledDate;
-        s.endDate = s.scheduledDate;
-        delete s.scheduledDate;
-      }
+      if (s.scheduledDate && !s.startDate) { s.startDate = s.scheduledDate; s.endDate = s.scheduledDate; delete s.scheduledDate; }
       if (!s.endDate) s.endDate = s.startDate;
       if (s.endDate < s.startDate) s.endDate = s.startDate;
       if (STATUS_MIGRATE[s.status]) s.status = STATUS_MIGRATE[s.status];
@@ -679,6 +853,7 @@ function loadData() {
 }
 
 function saveData() {
+  if (useSupabase) return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(schedules));
 }
 
@@ -892,7 +1067,7 @@ function closeModal() {
   editingId = null;
 }
 
-function saveSchedule() {
+async function saveSchedule() {
   const title = document.getElementById('fTitle').value.trim();
   const startDate = document.getElementById('fStartDate').value;
   const endDate = document.getElementById('fEndDate').value;
@@ -902,15 +1077,32 @@ function saveSchedule() {
   if (endDate < startDate) { shakeEl(document.getElementById('fEndDate')); return showToast('结束日期不能早于开始日期', 'warning'); }
 
   const platforms = [...document.querySelectorAll('#platformOptions input:checked')].map(cb => cb.value);
-  const data = {
-    title, platforms, startDate, endDate,
-    scheduledTime: document.getElementById('fTime').value || '',
-    reminderMinutes: parseInt(document.getElementById('fReminder').value) || 0,
+  const payload = {
+    title, platforms, start_date: startDate, end_date: endDate,
+    scheduled_time: document.getElementById('fTime').value || '12:00',
+    reminder_minutes: parseInt(document.getElementById('fReminder').value) || 0,
     status: document.getElementById('fStatus').value,
     assignee: document.getElementById('fAssignee').value.trim(),
     description: document.getElementById('fDescription').value.trim(),
   };
 
+  if (useSupabase && supabase && currentUserId) {
+    try {
+      if (editingId) {
+        await supabase.from('schedules').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editingId).eq('user_id', currentUserId);
+        showToast('排期已更新', 'success');
+      } else {
+        await supabase.from('schedules').insert({ user_id: currentUserId, ...payload });
+        showToast('排期已创建', 'success');
+      }
+      closeModal();
+      await loadData();
+      renderCalendar();
+    } catch (e) { showToast('保存失败', 'danger'); }
+    return;
+  }
+
+  const data = { title, platforms, startDate, endDate, scheduledTime: payload.scheduled_time, reminderMinutes: payload.reminder_minutes, status: payload.status, assignee: payload.assignee, description: payload.description };
   if (editingId) {
     const idx = schedules.findIndex(s => s.id === editingId);
     if (idx > -1) schedules[idx] = { ...schedules[idx], ...data, updatedAt: new Date().toISOString() };
@@ -919,18 +1111,26 @@ function saveSchedule() {
     schedules.push({ id: genId(), ...data, reminded: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
     showToast('排期已创建', 'success');
   }
-
   saveData(); closeModal(); renderCalendar();
 }
 
 /* ===== Delete ===== */
 function confirmDelete() { document.getElementById('confirmOverlay').classList.add('active'); }
 function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('active'); }
-function doDelete() {
+async function doDelete() {
   if (!editingId) return;
   const deleteId = editingId;
   document.querySelectorAll(`.event-bar[data-id="${deleteId}"]`).forEach(b => b.classList.add('removing'));
   closeConfirm(); closeModal();
+  if (useSupabase && supabase && currentUserId) {
+    try {
+      await supabase.from('schedules').delete().eq('id', deleteId).eq('user_id', currentUserId);
+      await loadData();
+      renderCalendar();
+      showToast('排期已删除', 'danger');
+    } catch { showToast('删除失败', 'danger'); }
+    return;
+  }
   setTimeout(() => {
     schedules = schedules.filter(s => s.id !== deleteId);
     saveData(); renderCalendar();
@@ -947,21 +1147,31 @@ function onDragStart(e, id) {
 }
 function onDragEnter(e) { e.currentTarget.style.background = 'rgba(99,102,241,.08)'; }
 function onDragLeave(e) { e.currentTarget.style.background = ''; }
-function onDrop(e) {
+async function onDrop(e) {
   e.preventDefault();
   e.currentTarget.style.background = '';
   if (!dragData) return;
   const newDate = e.currentTarget.dataset.date;
   const ev = schedules.find(s => s.id === dragData);
-  if (ev && newDate) {
-    const dur = daysBetween(ev.startDate, ev.endDate);
-    ev.startDate = newDate;
-    ev.endDate = addDays(newDate, dur);
-    ev.reminded = false;
-    ev.updatedAt = new Date().toISOString();
-    saveData(); renderCalendar();
-    showToast('排期日期已更新', 'success');
+  if (!ev || !newDate) { dragData = null; return; }
+  const dur = daysBetween(ev.startDate, ev.endDate);
+  const endDate = addDays(newDate, dur);
+  if (useSupabase && supabase && currentUserId) {
+    try {
+      await supabase.from('schedules').update({ start_date: newDate, end_date: endDate, reminded: false, updated_at: new Date().toISOString() }).eq('id', ev.id).eq('user_id', currentUserId);
+      await loadData();
+      renderCalendar();
+      showToast('排期日期已更新', 'success');
+    } catch { showToast('更新失败', 'danger'); }
+    dragData = null;
+    return;
   }
+  ev.startDate = newDate;
+  ev.endDate = endDate;
+  ev.reminded = false;
+  ev.updatedAt = new Date().toISOString();
+  saveData(); renderCalendar();
+  showToast('排期日期已更新', 'success');
   dragData = null;
 }
 
@@ -976,7 +1186,10 @@ function checkReminders() {
     const target = new Date(`${s.startDate}T${s.scheduledTime || '12:00'}:00`);
     const reminderTime = new Date(target.getTime() - s.reminderMinutes * 60000);
     if (now >= reminderTime && now <= target) {
-      s.reminded = true; saveData();
+      s.reminded = true;
+      if (useSupabase && supabase && currentUserId) {
+        supabase.from('schedules').update({ reminded: true }).eq('id', s.id).eq('user_id', currentUserId).then(() => {});
+      } else saveData();
       const mins = s.reminderMinutes >= 1440 ? `${s.reminderMinutes/1440}天` : s.reminderMinutes >= 60 ? `${s.reminderMinutes/60}小时` : `${s.reminderMinutes}分钟`;
       showToast(`⏰ "${s.title}" 将在${mins}内到期`, 'warning', 8000);
       if ('Notification' in window && Notification.permission === 'granted') {
@@ -1002,20 +1215,54 @@ function importData(e) {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = function(ev) {
+  reader.onload = async function(ev) {
     try {
-      const data = JSON.parse(ev.target.result);
-      if (!Array.isArray(data)) throw new Error();
-      data.forEach(item => {
-        if (!item.id) item.id = genId();
-        item.reminded = false;
+      let raw = JSON.parse(ev.target.result);
+      if (!Array.isArray(raw)) throw new Error();
+      const normalized = raw.map(item => {
         if (item.scheduledDate && !item.startDate) { item.startDate = item.scheduledDate; item.endDate = item.scheduledDate; delete item.scheduledDate; }
         if (!item.endDate) item.endDate = item.startDate;
         if (STATUS_MIGRATE[item.status]) item.status = STATUS_MIGRATE[item.status];
+        return {
+          title: item.title,
+          platforms: item.platforms || [],
+          start_date: item.startDate,
+          end_date: item.endDate,
+          scheduled_time: item.scheduledTime || '12:00',
+          reminder_minutes: item.reminderMinutes || 0,
+          status: item.status || 'pending',
+          assignee: item.assignee || '',
+          description: item.description || '',
+          reminded: false,
+        };
       });
-      schedules = [...schedules, ...data];
-      saveData(); renderCalendar();
-      showToast(`成功导入 ${data.length} 条排期`, 'success');
+      if (useSupabase && supabase && currentUserId) {
+        const rows = normalized.map(row => ({ user_id: currentUserId, ...row }));
+        const { error } = await supabase.from('schedules').insert(rows);
+        if (error) throw error;
+        await loadData();
+        renderCalendar();
+        showToast(`成功导入 ${normalized.length} 条排期`, 'success');
+      } else {
+        const added = normalized.map(row => ({
+          id: genId(),
+          title: row.title,
+          platforms: row.platforms,
+          startDate: row.start_date,
+          endDate: row.end_date,
+          scheduledTime: row.scheduled_time,
+          reminderMinutes: row.reminder_minutes,
+          status: row.status,
+          assignee: row.assignee,
+          description: row.description,
+          reminded: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }));
+        schedules = [...schedules, ...added];
+        saveData(); renderCalendar();
+        showToast(`成功导入 ${added.length} 条排期`, 'success');
+      }
     } catch { showToast('导入失败：文件格式不正确', 'danger'); }
   };
   reader.readAsText(file);
