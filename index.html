@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>短视频营销排期表</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#6366f1;--primary-light:#818cf8;--primary-dark:#4f46e5;--primary-bg:#eef2ff;
+  --success:#10b981;--success-bg:#ecfdf5;--warning:#f59e0b;--warning-bg:#fffbeb;
+  --danger:#ef4444;--danger-bg:#fef2f2;--info:#3b82f6;--info-bg:#eff6ff;
+  --bg:#f1f5f9;--surface:#fff;--border:#e2e8f0;--border-light:#f1f5f9;
+  --text:#1e293b;--text-secondary:#64748b;--text-muted:#94a3b8;
+  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 6px -1px rgba(0,0,0,.08),0 2px 4px -2px rgba(0,0,0,.04);
+  --shadow-lg:0 10px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.05);
+  --shadow-xl:0 20px 40px -8px rgba(0,0,0,.12);
+  --ease:cubic-bezier(.4,0,.2,1);--ease-bounce:cubic-bezier(.34,1.56,.64,1);
+}
+html{font-size:14px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overflow-x:hidden}
+button{font:inherit;cursor:pointer;border:none;background:none}
+input,select,textarea{font:inherit;border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;width:100%;
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease);outline:none;background:var(--surface);color:var(--text)}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+textarea{resize:vertical;min-height:80px}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+
+.app{max-width:1400px;margin:0 auto;padding:16px 24px 40px}
+
+/* ===== Header ===== */
+.header{display:flex;align-items:center;justify-content:space-between;padding:20px 0 16px;flex-wrap:wrap;gap:12px}
+.header-brand{display:flex;align-items:center;gap:12px}
+.header-brand h1{font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,var(--primary),#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header-brand .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--primary),#a855f7);border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 12px rgba(99,102,241,.3)}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ===== Buttons ===== */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--radius-sm);font-weight:500;font-size:.875rem;
+  transition:all .2s var(--ease);white-space:nowrap}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(99,102,241,.3)}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(99,102,241,.4);transform:translateY(-1px)}
+.btn-ghost{color:var(--text-secondary);background:var(--surface);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--border-light);border-color:var(--text-muted)}
+.btn-danger{background:var(--danger);color:#fff;box-shadow:0 2px 8px rgba(239,68,68,.3)}
+.btn-danger:hover{background:#dc2626;transform:translateY(-1px)}
+.btn-sm{padding:6px 12px;font-size:.8rem}
+
+/* ===== Help Panel ===== */
+.help-panel{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+.help-header{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;
+  transition:background .15s var(--ease)}
+.help-header:hover{background:var(--border-light)}
+.help-header h3{font-size:.95rem;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--text)}
+.help-toggle{font-size:.7rem;color:var(--text-muted);transition:transform .35s var(--ease);display:inline-block}
+.help-panel.expanded .help-toggle{transform:rotate(180deg)}
+.help-content{max-height:0;overflow:hidden;transition:max-height .45s var(--ease),padding .35s var(--ease);padding:0 20px}
+.help-panel.expanded .help-content{max-height:500px;padding:0 20px 20px}
+.help-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.help-section{padding:14px 16px;background:var(--border-light);border-radius:var(--radius-sm)}
+.help-section h4{font-size:.85rem;font-weight:700;margin-bottom:8px;color:var(--primary-dark);display:flex;align-items:center;gap:6px}
+.help-section ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.help-section li{font-size:.8rem;color:var(--text-secondary);padding-left:16px;position:relative;line-height:1.5}
+.help-section li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--primary-light)}
+
+/* ===== Toolbar ===== */
+.toolbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--surface);border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:16px;flex-wrap:wrap;gap:12px}
+.nav{display:flex;align-items:center;gap:8px}
+.nav-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+  color:var(--text-secondary);transition:all .2s var(--ease)}
+.nav-btn:hover{background:var(--primary-bg);color:var(--primary)}
+.nav-month{font-size:1.15rem;font-weight:600;min-width:140px;text-align:center}
+.btn-today{margin-left:4px}
+.stats{display:flex;gap:16px;flex-wrap:wrap}
+.stat-item{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--text-secondary)}
+.stat-dot{width:8px;height:8px;border-radius:50%}
+.stat-num{font-weight:700;color:var(--text);font-size:1rem}
+
+/* ===== Filter ===== */
+.filter-bar{display:flex;gap:6px;padding:10px 0;flex-wrap:wrap;align-items:center}
+.filter-chip{padding:5px 14px;border-radius:20px;font-size:.8rem;border:1px solid var(--border);color:var(--text-secondary);
+  transition:all .2s var(--ease);cursor:pointer;user-select:none}
+.filter-chip:hover{border-color:var(--primary-light);color:var(--primary)}
+.filter-chip.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 2px 8px rgba(99,102,241,.25)}
+.filter-label{font-size:.8rem;color:var(--text-muted);margin-right:4px}
+
+/* ===== Calendar ===== */
+.calendar{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.calendar-weekdays{display:grid;grid-template-columns:repeat(7,1fr);background:var(--border-light);border-bottom:1px solid var(--border)}
+.calendar-weekdays div{padding:12px 8px;text-align:center;font-size:.8rem;font-weight:600;color:var(--text-secondary);letter-spacing:.5px}
+.calendar-weekdays div:nth-child(6),.calendar-weekdays div:nth-child(7){color:var(--primary-light)}
+.calendar-body{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(110px,auto)}
+.calendar-cell{border-right:1px solid var(--border-light);border-bottom:1px solid var(--border-light);
+  padding:2px 0;position:relative;transition:background .15s var(--ease);cursor:pointer;overflow:hidden}
+.calendar-cell:nth-child(7n){border-right:none}
+.calendar-cell:hover{background:rgba(99,102,241,.03)}
+.calendar-cell.other-month{background:#fafbfc}
+.calendar-cell.other-month .cell-date{color:var(--text-muted)}
+.calendar-cell.today .cell-date span{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(99,102,241,.3)}
+.cell-date{padding:2px 6px;display:flex;align-items:center;justify-content:space-between;margin-bottom:1px}
+.cell-date span{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;
+  font-size:.82rem;font-weight:600;transition:all .15s var(--ease)}
+.cell-add-btn{width:20px;height:20px;border-radius:50%;background:var(--primary-bg);color:var(--primary);
+  display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;
+  opacity:0;transition:all .2s var(--ease);flex-shrink:0}
+.calendar-cell:hover .cell-add-btn{opacity:1}
+.cell-add-btn:hover{background:var(--primary);color:#fff;transform:scale(1.15)}
+.cell-events{display:flex;flex-direction:column}
+
+/* ===== Event Bars ===== */
+.event-bar{height:22px;line-height:22px;font-size:.72rem;font-weight:600;padding:0 8px;margin:1px 0;overflow:hidden;
+  white-space:nowrap;text-overflow:ellipsis;cursor:pointer;transition:filter .15s var(--ease);
+  animation:barIn .3s var(--ease) both;position:relative}
+.event-bar:hover{filter:brightness(.9);z-index:2}
+.event-bar.removing{animation:barOut .3s var(--ease) forwards}
+.event-placeholder{height:22px;margin:1px 0}
+
+.bar-cap-left{margin-left:4px;border-radius:5px 0 0 5px}
+.bar-cap-right{margin-right:4px;border-radius:0 5px 5px 0}
+.bar-cap-both{margin-left:4px;margin-right:4px;border-radius:5px}
+
+/* Status bar colors */
+.bar-pending{background:#bfdbfe;color:#1e40af}
+.bar-published{background:#a7f3d0;color:#065f46}
+.bar-review{background:#fde68a;color:#92400e}
+.bar-settling{background:#ddd6fe;color:#5b21b6}
+.bar-settled{background:#99f6e4;color:#115e59}
+
+/* ===== Modal ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.4);backdrop-filter:blur(4px);z-index:100;
+  display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all .3s var(--ease)}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal{background:var(--surface);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;
+  box-shadow:var(--shadow-xl);transform:translateY(30px) scale(.95);transition:transform .35s var(--ease-bounce);
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.modal-overlay.active .modal{transform:translateY(0) scale(1)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:24px 28px 0;position:sticky;top:0;background:var(--surface);z-index:1}
+.modal-header h3{font-size:1.2rem;font-weight:700}
+.modal-close{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;
+  color:var(--text-muted);transition:all .15s var(--ease)}
+.modal-close:hover{background:var(--danger-bg);color:var(--danger)}
+.modal-body{padding:20px 28px 8px}
+.modal-footer{padding:16px 28px 24px;display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:var(--surface)}
+.modal-footer .btn-delete-wrap{margin-right:auto}
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:.85rem;font-weight:600;color:var(--text-secondary);margin-bottom:6px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Platform chips */
+.platform-options{display:flex;flex-wrap:wrap;gap:8px}
+.platform-option{position:relative}
+.platform-option input{position:absolute;opacity:0;pointer-events:none}
+.platform-option label{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);
+  font-size:.8rem;cursor:pointer;transition:all .2s var(--ease);user-select:none}
+.platform-option label .p-dot{width:8px;height:8px;border-radius:50%}
+.platform-option input:checked+label{border-color:var(--primary);background:var(--primary-bg);color:var(--primary);font-weight:600;
+  box-shadow:0 2px 8px rgba(99,102,241,.15)}
+.platform-option label:hover{border-color:var(--primary-light)}
+
+/* ===== Confirm Dialog ===== */
+.confirm-overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);z-index:200;
+  display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all .25s var(--ease)}
+.confirm-overlay.active{opacity:1;visibility:visible}
+.confirm-box{background:var(--surface);border-radius:16px;padding:32px;max-width:400px;width:100%;text-align:center;
+  box-shadow:var(--shadow-xl);transform:scale(.9);transition:transform .3s var(--ease-bounce)}
+.confirm-overlay.active .confirm-box{transform:scale(1)}
+.confirm-icon{font-size:2.5rem;margin-bottom:12px}
+.confirm-title{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.confirm-msg{color:var(--text-secondary);font-size:.9rem;margin-bottom:24px}
+.confirm-actions{display:flex;gap:10px;justify-content:center}
+
+/* ===== Toast ===== */
+.toast-container{position:fixed;top:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{display:flex;align-items:center;gap:10px;padding:14px 20px;border-radius:var(--radius);background:var(--surface);
+  box-shadow:var(--shadow-lg);pointer-events:auto;animation:toastIn .4s var(--ease-bounce);min-width:280px;max-width:420px;
+  border-left:4px solid var(--primary)}
+.toast.toast-success{border-left-color:var(--success)}
+.toast.toast-warning{border-left-color:var(--warning)}
+.toast.toast-danger{border-left-color:var(--danger)}
+.toast.removing{animation:toastOut .3s var(--ease) forwards}
+.toast-icon{font-size:1.2rem;flex-shrink:0}
+.toast-text{flex:1;font-size:.875rem;font-weight:500}
+.toast-close{color:var(--text-muted);font-size:1.1rem;padding:2px;flex-shrink:0;cursor:pointer;transition:color .15s}
+.toast-close:hover{color:var(--text)}
+
+/* ===== Holidays ===== */
+.cell-holiday{font-size:.58rem;color:#e11d48;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  flex:1;text-align:center;line-height:26px;opacity:.9;letter-spacing:-.2px}
+.calendar-cell.other-month .cell-holiday{opacity:.35}
+.cell-holiday-rest{font-size:.6rem;color:#16a34a;font-weight:700;flex-shrink:0;line-height:26px}
+.cell-makeup-badge{font-size:.6rem;color:#ea580c;font-weight:700;flex-shrink:0;line-height:26px}
+.calendar-cell.cell-off{background:rgba(254,226,226,.3)}
+.calendar-cell.cell-off:hover{background:rgba(254,226,226,.45)}
+.calendar-cell.cell-off.other-month{background:rgba(254,226,226,.12)}
+.calendar-cell.cell-makeup{background:rgba(254,243,199,.35)}
+.calendar-cell.cell-makeup:hover{background:rgba(254,243,199,.5)}
+
+/* ===== Trends Panel ===== */
+.trends-panel{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:16px;overflow:hidden}
+.trends-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 14px;flex-wrap:wrap;gap:10px;
+  border-bottom:1px solid var(--border-light)}
+.trends-header h3{font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:8px;flex:1}
+.trends-grid{display:grid;grid-template-columns:1fr 1fr}
+.trends-column{border-right:1px solid var(--border-light)}
+.trends-column:last-child{border-right:none}
+.trends-col-header{display:flex;align-items:center;gap:8px;padding:12px 16px;font-size:.88rem;font-weight:600;
+  background:var(--border-light);border-bottom:1px solid var(--border)}
+.trends-platform-icon{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:.7rem;font-weight:700;flex-shrink:0}
+.trends-col-body{max-height:560px;overflow-y:auto;scrollbar-width:thin}
+.trend-item{display:flex;align-items:center;gap:10px;padding:9px 16px;transition:background .15s var(--ease);
+  cursor:pointer;text-decoration:none;color:inherit;border-bottom:1px solid var(--border-light)}
+.trend-item:last-child{border-bottom:none}
+.trend-item:hover{background:var(--primary-bg)}
+.trend-rank{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;background:var(--border-light);color:var(--text-muted);flex-shrink:0}
+.trend-item:nth-child(1) .trend-rank{background:#ff4757;color:#fff}
+.trend-item:nth-child(2) .trend-rank{background:#ff6348;color:#fff}
+.trend-item:nth-child(3) .trend-rank{background:#ffa502;color:#fff}
+.trend-title{flex:1;font-size:.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trend-hot{font-size:.7rem;color:var(--text-muted);flex-shrink:0}
+.trends-footer{padding:10px 16px;border-top:1px solid var(--border-light);display:flex;align-items:center;
+  justify-content:space-between;font-size:.75rem;color:var(--text-muted)}
+.trends-loading,.trends-error{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:.85rem}
+.trends-error{color:var(--text-secondary)}
+.trends-loading .spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);
+  border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== Animations ===== */
+@keyframes barIn{0%{opacity:0;transform:translateY(-4px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes barOut{to{opacity:0;transform:scaleY(0);height:0;margin:0;padding:0}}
+@keyframes toastIn{0%{opacity:0;transform:translateX(100px)}100%{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{0%{opacity:1;transform:translateX(0)}100%{opacity:0;transform:translateX(100px)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes fadeCalendar{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+.calendar-body{animation:fadeCalendar .35s var(--ease)}
+
+/* ===== Responsive ===== */
+@media(max-width:900px){
+  .help-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .app{padding:10px 12px 30px}
+  .header{flex-direction:column;align-items:flex-start}
+  .toolbar{flex-direction:column;align-items:flex-start}
+  .stats{width:100%}
+  .calendar-body{grid-auto-rows:minmax(80px,auto)}
+  .form-row{grid-template-columns:1fr}
+  .modal{max-width:100%;margin:10px;border-radius:var(--radius)}
+  .nav-month{font-size:1rem;min-width:auto}
+  .event-bar{height:18px;line-height:18px;font-size:.65rem}
+  .event-placeholder{height:18px}
+  .trends-grid{grid-template-columns:1fr}
+  .trends-column{border-right:none;border-bottom:1px solid var(--border-light)}
+  .trends-column:last-child{border-bottom:none}
+  .cell-holiday{font-size:.5rem}
+}
+@media(max-width:480px){
+  .calendar-weekdays div{font-size:.65rem;padding:8px 2px}
+  .calendar-body{grid-auto-rows:minmax(64px,auto)}
+  .cell-date span{width:22px;height:22px;font-size:.72rem}
+  .event-bar{height:16px;line-height:16px;font-size:.6rem;padding:0 4px}
+  .event-placeholder{height:16px}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="header">
+    <div class="header-brand">
+      <div class="logo-icon">📅</div>
+      <h1>短视频营销排期表</h1>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" onclick="toggleHelp()" title="使用说明">📖 说明</button>
+      <button class="btn btn-ghost btn-sm" onclick="exportData()" title="导出数据">📤 导出</button>
+      <button class="btn btn-ghost btn-sm" onclick="triggerImport()" title="导入数据">📥 导入</button>
+      <button class="btn btn-primary" onclick="openModal()">＋ 新建排期</button>
+      <input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(event)">
+    </div>
+  </header>
+
+  <!-- 使用说明 -->
+  <div class="help-panel" id="helpPanel">
+    <div class="help-header" onclick="toggleHelp()">
+      <h3>📖 使用说明</h3>
+      <span class="help-toggle">▼</span>
+    </div>
+    <div class="help-content">
+      <div class="help-grid">
+        <div class="help-section">
+          <h4>📌 基本操作</h4>
+          <ul>
+            <li>点击日历中任意日期的 <b>+</b> 号可快速创建新排期</li>
+            <li>点击日历上的排期横条可查看详情并编辑</li>
+            <li>排期支持设置开始和结束日期，以横条形式跨日展示</li>
+            <li>单日排期显示为圆角标签，多日排期显示为贯穿横条</li>
+            <li>拖拽排期横条到其他日期可快速调整时间，持续天数不变</li>
+          </ul>
+        </div>
+        <div class="help-section">
+          <h4>📅 日历标记</h4>
+          <ul>
+            <li><b style="color:#e11d48">红色文字</b>：显示中国传统节日与公历节日名称</li>
+            <li><b style="color:rgba(254,226,226,.8)">粉色背景</b> + <b style="color:#16a34a">绿色「休」</b>：法定节假日放假日</li>
+            <li><b style="color:rgba(254,243,199,.8)">黄色背景</b> + <b style="color:#ea580c">橙色「班」</b>：调休补班工作日</li>
+            <li>已内置 2025-2027 年法定节假日及调休安排</li>
+          </ul>
+        </div>
+        <div class="help-section">
+          <h4>🔍 筛选与导航</h4>
+          <ul>
+            <li>使用顶部筛选栏可按状态快速过滤排期</li>
+            <li>支持五种状态：待发布、已发布、待审核、待结算、已结算</li>
+            <li>点击「今天」按钮快速回到当前月份</li>
+            <li>使用左右箭头切换查看不同月份</li>
+          </ul>
+        </div>
+        <div class="help-section">
+          <h4>🔥 平台热点</h4>
+          <ul>
+            <li>页面底部实时聚合展示抖音和微博热搜榜</li>
+            <li>点击热搜条目可跳转到对应话题详情页</li>
+            <li>数据自动缓存 30 分钟，点击「刷新」获取最新数据</li>
+            <li>前三名以红色/橙色徽章高亮展示</li>
+          </ul>
+        </div>
+        <div class="help-section">
+          <h4>📤 数据管理</h4>
+          <ul>
+            <li><b>导出</b>：将所有数据导出为 JSON 文件，可用于备份或分享</li>
+            <li><b>导入</b>：从 JSON 文件导入排期数据，会与现有数据合并</li>
+            <li>所有数据自动保存在浏览器本地，刷新不丢失</li>
+          </ul>
+        </div>
+        <div class="help-section">
+          <h4>⏰ 提醒与快捷键</h4>
+          <ul>
+            <li>创建排期时可设置提前提醒（5分钟~1天）</li>
+            <li>页面打开时自动检测并弹出浏览器通知提醒</li>
+            <li>按 <b>Esc</b> 快速关闭任意弹窗</li>
+            <li>点击弹窗外部半透明区域也可关闭弹窗</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="nav">
+      <button class="nav-btn" onclick="changeMonth(-1)" title="上个月">‹</button>
+      <span class="nav-month" id="navMonth"></span>
+      <button class="nav-btn" onclick="changeMonth(1)" title="下个月">›</button>
+      <button class="btn btn-ghost btn-sm btn-today" onclick="goToday()">今天</button>
+    </div>
+    <div class="stats">
+      <div class="stat-item"><span class="stat-dot" style="background:var(--primary)"></span>今日 <span class="stat-num" id="statToday">0</span></div>
+      <div class="stat-item"><span class="stat-dot" style="background:var(--info)"></span>本周 <span class="stat-num" id="statWeek">0</span></div>
+      <div class="stat-item"><span class="stat-dot" style="background:var(--success)"></span>本月 <span class="stat-num" id="statMonth">0</span></div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <span class="filter-label">筛选：</span>
+    <span class="filter-chip active" onclick="setFilter('all',this)">全部</span>
+    <span class="filter-chip" onclick="setFilter('pending',this)">🚀 待发布</span>
+    <span class="filter-chip" onclick="setFilter('published',this)">✅ 已发布</span>
+    <span class="filter-chip" onclick="setFilter('review',this)">👀 待审核</span>
+    <span class="filter-chip" onclick="setFilter('settling',this)">💰 待结算</span>
+    <span class="filter-chip" onclick="setFilter('settled',this)">✔️ 已结算</span>
+  </div>
+
+  <!-- Calendar -->
+  <div class="calendar">
+    <div class="calendar-weekdays">
+      <div>周一</div><div>周二</div><div>周三</div><div>周四</div><div>周五</div><div>周六</div><div>周日</div>
+    </div>
+    <div class="calendar-body" id="calendarBody"></div>
+  </div>
+
+  <!-- 热点聚合 -->
+  <div class="trends-panel">
+    <div class="trends-header">
+      <h3>🔥 平台热点</h3>
+      <button class="btn btn-ghost btn-sm" onclick="clearAllTrendsCache();fetchAllTrends()">🔄 刷新</button>
+    </div>
+    <div class="trends-grid">
+      <div class="trends-column">
+        <div class="trends-col-header">
+          <span class="trends-platform-icon" style="background:#000">抖</span>
+          <span>抖音热搜</span>
+        </div>
+        <div class="trends-col-body" id="douyinTrendsBody">
+          <div class="trends-loading"><div class="spinner"></div><div>加载中…</div></div>
+        </div>
+      </div>
+      <div class="trends-column">
+        <div class="trends-col-header">
+          <span class="trends-platform-icon" style="background:#ff8200">微</span>
+          <span>微博热搜</span>
+        </div>
+        <div class="trends-col-body" id="weiboTrendsBody">
+          <div class="trends-loading"><div class="spinner"></div><div>加载中…</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="trends-footer">
+      <span id="trendsTime">点击刷新获取最新热搜</span>
+      <span>数据缓存30分钟</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">新建排期</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">标题 *</label>
+        <input type="text" id="fTitle" placeholder="输入排期标题…" maxlength="80">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">目标平台</label>
+        <div class="platform-options" id="platformOptions"></div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">开始日期 *</label>
+          <input type="date" id="fStartDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">结束日期 *</label>
+          <input type="date" id="fEndDate">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">发布时间</label>
+          <input type="time" id="fTime" value="12:00">
+        </div>
+        <div class="form-group">
+          <label class="form-label">提前提醒</label>
+          <select id="fReminder">
+            <option value="0">不提醒</option>
+            <option value="5">5 分钟前</option>
+            <option value="15">15 分钟前</option>
+            <option value="30" selected>30 分钟前</option>
+            <option value="60">1 小时前</option>
+            <option value="1440">1 天前</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">状态</label>
+          <select id="fStatus"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">负责人</label>
+          <input type="text" id="fAssignee" placeholder="负责人姓名…" maxlength="20">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">详细描述</label>
+        <textarea id="fDescription" rows="4" placeholder="脚本文案、拍摄要点、素材链接等…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="modal-footer btn-delete-wrap">
+        <button class="btn btn-danger btn-sm" id="btnDelete" style="display:none" onclick="confirmDelete()">🗑 删除</button>
+      </div>
+      <button class="btn btn-ghost" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveSchedule()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Dialog -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">⚠️</div>
+    <div class="confirm-title">确认删除</div>
+    <div class="confirm-msg">删除后无法恢复，确定要删除吗？</div>
+    <div class="confirm-actions">
+      <button class="btn btn-ghost" onclick="closeConfirm()">取消</button>
+      <button class="btn btn-danger" onclick="doDelete()">确认删除</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+const PLATFORMS = [
+  { id:'douyin',     name:'抖音',   color:'#000000' },
+  { id:'xiaohongshu',name:'小红书', color:'#ff2442' },
+  { id:'shipinhao',  name:'视频号', color:'#07c160' },
+  { id:'bilibili',   name:'B站',   color:'#00a1d6' },
+  { id:'kuaishou',   name:'快手',   color:'#ff4906' },
+  { id:'weibo',      name:'微博',   color:'#ff8200' },
+];
+
+const STATUSES = [
+  { id:'pending',   name:'🚀 待发布', bar:'bar-pending' },
+  { id:'published', name:'✅ 已发布', bar:'bar-published' },
+  { id:'review',    name:'👀 待审核', bar:'bar-review' },
+  { id:'settling',  name:'💰 待结算', bar:'bar-settling' },
+  { id:'settled',   name:'✔️ 已结算', bar:'bar-settled' },
+];
+
+const STATUS_MIGRATE = {idea:'pending',script:'pending',shooting:'pending',editing:'pending',ready:'pending',review:'review',published:'published'};
+const STORAGE_KEY = 'marketing_schedules_v2';
+
+const SOLAR_HOLIDAYS = {
+  '01-01':'元旦','02-14':'情人节','03-08':'妇女节','03-12':'植树节',
+  '03-15':'消费者日','04-01':'愚人节','05-01':'劳动节','05-04':'青年节',
+  '05-20':'520','06-01':'儿童节','06-18':'618','07-01':'建党节',
+  '08-01':'建军节','09-10':'教师节','10-01':'国庆节','10-02':'国庆','10-03':'国庆',
+  '10-31':'万圣节','11-11':'双十一','12-12':'双十二','12-24':'平安夜','12-25':'圣诞节',
+};
+const LUNAR_HOLIDAYS = {
+  '2025-01-28':'除夕','2025-01-29':'春节','2025-01-30':'初二','2025-01-31':'初三',
+  '2025-02-12':'元宵节','2025-04-04':'清明','2025-05-31':'端午',
+  '2025-08-29':'七夕','2025-10-06':'中秋','2025-10-29':'重阳',
+  '2026-02-16':'除夕','2026-02-17':'春节','2026-02-18':'初二','2026-02-19':'初三',
+  '2026-03-03':'元宵节','2026-04-05':'清明','2026-06-19':'端午',
+  '2026-08-19':'七夕','2026-09-25':'中秋','2026-10-18':'重阳',
+  '2027-02-05':'除夕','2027-02-06':'春节','2027-02-07':'初二','2027-02-08':'初三',
+  '2027-02-20':'元宵节','2027-04-05':'清明','2027-06-08':'端午',
+  '2027-08-08':'七夕','2027-09-15':'中秋','2027-10-08':'重阳',
+};
+function getHoliday(dateStr) {
+  return LUNAR_HOLIDAYS[dateStr] || SOLAR_HOLIDAYS[dateStr.slice(5)] || null;
+}
+
+const HOLIDAY_PERIODS = {
+  '2025': [
+    { name:'元旦',   start:'2025-01-01', end:'2025-01-01', makeup:[] },
+    { name:'春节',   start:'2025-01-28', end:'2025-02-04', makeup:['2025-01-26'] },
+    { name:'清明节', start:'2025-04-04', end:'2025-04-06', makeup:[] },
+    { name:'劳动节', start:'2025-05-01', end:'2025-05-05', makeup:['2025-04-27'] },
+    { name:'端午节', start:'2025-05-31', end:'2025-06-02', makeup:[] },
+    { name:'国庆节', start:'2025-10-01', end:'2025-10-08', makeup:['2025-09-28','2025-10-11'] },
+  ],
+  '2026': [
+    { name:'元旦',   start:'2026-01-01', end:'2026-01-03', makeup:[] },
+    { name:'春节',   start:'2026-02-15', end:'2026-02-22', makeup:['2026-02-14'] },
+    { name:'清明节', start:'2026-04-04', end:'2026-04-06', makeup:[] },
+    { name:'劳动节', start:'2026-05-01', end:'2026-05-05', makeup:['2026-04-26'] },
+    { name:'端午节', start:'2026-06-19', end:'2026-06-21', makeup:[] },
+    { name:'中秋节', start:'2026-09-25', end:'2026-09-27', makeup:[] },
+    { name:'国庆节', start:'2026-10-01', end:'2026-10-07', makeup:['2026-10-10'] },
+  ],
+  '2027': [
+    { name:'元旦',   start:'2027-01-01', end:'2027-01-03', makeup:[] },
+    { name:'春节',   start:'2027-02-05', end:'2027-02-12', makeup:['2027-02-14'] },
+    { name:'清明节', start:'2027-04-03', end:'2027-04-05', makeup:[] },
+    { name:'劳动节', start:'2027-05-01', end:'2027-05-05', makeup:['2027-04-25'] },
+    { name:'端午节', start:'2027-06-07', end:'2027-06-09', makeup:['2027-06-12'] },
+    { name:'中秋节', start:'2027-09-13', end:'2027-09-15', makeup:['2027-09-18'] },
+    { name:'国庆节', start:'2027-10-01', end:'2027-10-07', makeup:['2027-09-26','2027-10-09'] },
+  ],
+};
+
+function getHolidayInfo(dateStr) {
+  const year = dateStr.slice(0, 4);
+  const periods = HOLIDAY_PERIODS[year];
+  if (!periods) return null;
+  for (const p of periods) {
+    if (dateStr >= p.start && dateStr <= p.end) return { type:'off', name:p.name };
+    if (p.makeup.includes(dateStr)) return { type:'makeup', name:p.name };
+  }
+  return null;
+}
+
+const TRENDS_CACHE_KEY = 'marketing_trends_cache';
+const TRENDS_TTL = 30 * 60 * 1000;
+const TREND_APIS = {
+  douyin: 'https://api.pearktrue.cn/api/dailyhot/?title=%E6%8A%96%E9%9F%B3',
+  weibo: 'https://api.pearktrue.cn/api/dailyhot/?title=%E5%BE%AE%E5%8D%9A',
+};
+
+let schedules = [];
+let currentDate = new Date();
+let editingId = null;
+let activeFilter = 'all';
+let dragData = null;
+
+/* ===== Init ===== */
+function init() {
+  loadData();
+  renderPlatformOptions();
+  renderStatusOptions();
+  renderCalendar();
+  bindEvents();
+  requestNotificationPermission();
+  setInterval(checkReminders, 30000);
+  checkReminders();
+  if (!localStorage.getItem('help_seen')) {
+    document.getElementById('helpPanel').classList.add('expanded');
+    localStorage.setItem('help_seen', '1');
+  }
+  fetchAllTrends();
+}
+
+function loadData() {
+  try {
+    let raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      raw = localStorage.getItem('marketing_schedules_v1');
+    }
+    schedules = raw ? JSON.parse(raw) : [];
+    schedules.forEach(s => {
+      if (s.scheduledDate && !s.startDate) {
+        s.startDate = s.scheduledDate;
+        s.endDate = s.scheduledDate;
+        delete s.scheduledDate;
+      }
+      if (!s.endDate) s.endDate = s.startDate;
+      if (s.endDate < s.startDate) s.endDate = s.startDate;
+      if (STATUS_MIGRATE[s.status]) s.status = STATUS_MIGRATE[s.status];
+    });
+    saveData();
+  } catch { schedules = []; }
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(schedules));
+}
+
+/* ===== Calendar ===== */
+function renderCalendar() {
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  document.getElementById('navMonth').textContent = `${year}年${month + 1}月`;
+
+  const firstDay = new Date(year, month, 1);
+  let startWd = firstDay.getDay() - 1;
+  if (startWd < 0) startWd = 6;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrev = new Date(year, month, 0).getDate();
+  const totalCells = Math.ceil((startWd + daysInMonth) / 7) * 7;
+
+  const todayStr = fmtDate(new Date());
+  const filtered = getFilteredSchedules();
+
+  const cells = [];
+  for (let i = 0; i < totalCells; i++) {
+    let day, dateStr, isCur = true, isToday = false;
+    if (i < startWd) {
+      day = daysInPrev - startWd + i + 1;
+      dateStr = fmtDate(new Date(year, month - 1, day));
+      isCur = false;
+    } else if (i >= startWd + daysInMonth) {
+      day = i - startWd - daysInMonth + 1;
+      dateStr = fmtDate(new Date(year, month + 1, day));
+      isCur = false;
+    } else {
+      day = i - startWd + 1;
+      dateStr = fmtDate(new Date(year, month, day));
+      isToday = dateStr === todayStr;
+    }
+    cells.push({ day, dateStr, isCur, isToday });
+  }
+
+  const numRows = cells.length / 7;
+  let html = '';
+
+  for (let row = 0; row < numRows; row++) {
+    const rowCells = cells.slice(row * 7, row * 7 + 7);
+    const rowStart = rowCells[0].dateStr;
+    const rowEnd = rowCells[6].dateStr;
+
+    const rowEvents = filtered.filter(e => e.startDate <= rowEnd && e.endDate >= rowStart);
+    rowEvents.sort((a, b) => {
+      const aS = a.startDate < rowStart ? rowStart : a.startDate;
+      const bS = b.startDate < rowStart ? rowStart : b.startDate;
+      if (aS !== bS) return aS.localeCompare(bS);
+      const aD = daysBetween(a.startDate, a.endDate);
+      const bD = daysBetween(b.startDate, b.endDate);
+      if (aD !== bD) return bD - aD;
+      return a.id.localeCompare(b.id);
+    });
+
+    const lanes = [];
+    const laneMap = new Map();
+    rowEvents.forEach(ev => {
+      const effStart = ev.startDate < rowStart ? rowStart : ev.startDate;
+      let lane = -1;
+      for (let i = 0; i < lanes.length; i++) {
+        if (lanes[i] < effStart) { lane = i; break; }
+      }
+      if (lane === -1) { lane = lanes.length; lanes.push(null); }
+      const effEnd = ev.endDate > rowEnd ? rowEnd : ev.endDate;
+      lanes[lane] = effEnd;
+      laneMap.set(ev.id, lane);
+    });
+
+    for (let col = 0; col < 7; col++) {
+      const c = rowCells[col];
+      const dayEvents = rowEvents.filter(e => c.dateStr >= e.startDate && c.dateStr <= e.endDate);
+      dayEvents.sort((a, b) => laneMap.get(a.id) - laneMap.get(b.id));
+
+      let barsHtml = '';
+      let curLane = 0;
+      dayEvents.forEach(ev => {
+        const lane = laneMap.get(ev.id);
+        while (curLane < lane) { barsHtml += '<div class="event-placeholder"></div>'; curLane++; }
+
+        const isEvStart = c.dateStr === ev.startDate;
+        const isEvEnd = c.dateStr === ev.endDate;
+        const isRowStartCol = col === 0;
+        const isRowEndCol = col === 6;
+
+        const capLeft = isEvStart || (isRowStartCol && !isEvStart);
+        const capRight = isEvEnd || (isRowEndCol && !isEvEnd);
+        const showTitle = isEvStart || (isRowStartCol && !isEvStart);
+
+        const statusBar = STATUSES.find(st => st.id === ev.status)?.bar || 'bar-pending';
+        let cls = `event-bar ${statusBar}`;
+        if (capLeft && capRight) cls += ' bar-cap-both';
+        else if (capLeft) cls += ' bar-cap-left';
+        else if (capRight) cls += ' bar-cap-right';
+
+        barsHtml += `<div class="${cls}" data-id="${ev.id}" draggable="true"
+          ondragstart="onDragStart(event,'${ev.id}')"
+          onclick="event.stopPropagation();openModal(null,'${ev.id}')"
+          title="${esc(ev.title)}${ev.startDate !== ev.endDate ? ' ('+ev.startDate+' ~ '+ev.endDate+')' : ''}">${showTitle ? esc(ev.title) : '&nbsp;'}</div>`;
+        curLane = lane + 1;
+      });
+
+      const holiday = getHoliday(c.dateStr);
+      const hInfo = getHolidayInfo(c.dateStr);
+      const offCls = hInfo?.type==='off' ? ' cell-off' : '';
+      const mkCls = hInfo?.type==='makeup' ? ' cell-makeup' : '';
+      html += `<div class="calendar-cell${c.isCur?'':' other-month'}${c.isToday?' today':''}${offCls}${mkCls}"
+        data-date="${c.dateStr}" ondrop="onDrop(event)" ondragover="event.preventDefault()"
+        ondragenter="onDragEnter(event)" ondragleave="onDragLeave(event)">
+        <div class="cell-date">
+          <span>${c.day}</span>
+          ${holiday ? `<span class="cell-holiday">${holiday}</span>` : (hInfo?.type==='off' ? '<span class="cell-holiday-rest">休</span>' : '')}
+          ${hInfo?.type==='makeup' ? '<span class="cell-makeup-badge">班</span>' : ''}
+          ${c.isCur ? `<button class="cell-add-btn" onclick="event.stopPropagation();openModal('${c.dateStr}')">+</button>` : ''}
+        </div>
+        <div class="cell-events">${barsHtml}</div>
+      </div>`;
+    }
+  }
+
+  const body = document.getElementById('calendarBody');
+  body.innerHTML = html;
+  body.style.animation = 'none';
+  body.offsetHeight;
+  body.style.animation = '';
+  updateStats();
+}
+
+/* ===== Nav ===== */
+function changeMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
+function goToday() { currentDate = new Date(); renderCalendar(); }
+
+/* ===== Filter ===== */
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderCalendar();
+}
+function getFilteredSchedules() {
+  if (activeFilter === 'all') return schedules;
+  return schedules.filter(s => s.status === activeFilter);
+}
+
+/* ===== Stats ===== */
+function updateStats() {
+  const today = fmtDate(new Date());
+  const now = new Date();
+  const ws = new Date(now); ws.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  const we = new Date(ws); we.setDate(ws.getDate() + 6);
+  const wsStr = fmtDate(ws), weStr = fmtDate(we);
+  const ms = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
+  const me = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${new Date(now.getFullYear(),now.getMonth()+1,0).getDate()}`;
+
+  document.getElementById('statToday').textContent = schedules.filter(s => s.startDate <= today && s.endDate >= today).length;
+  document.getElementById('statWeek').textContent = schedules.filter(s => s.startDate <= weStr && s.endDate >= wsStr).length;
+  document.getElementById('statMonth').textContent = schedules.filter(s => s.startDate <= me && s.endDate >= ms).length;
+}
+
+/* ===== Help ===== */
+function toggleHelp() {
+  document.getElementById('helpPanel').classList.toggle('expanded');
+}
+
+/* ===== Modal ===== */
+function openModal(date, id) {
+  editingId = id || null;
+  const btnDel = document.getElementById('btnDelete');
+
+  document.querySelectorAll('#platformOptions input').forEach(cb => cb.checked = false);
+
+  if (editingId) {
+    const s = schedules.find(x => x.id === editingId);
+    if (!s) return;
+    document.getElementById('modalTitle').textContent = '编辑排期';
+    document.getElementById('fTitle').value = s.title;
+    document.getElementById('fStartDate').value = s.startDate;
+    document.getElementById('fEndDate').value = s.endDate;
+    document.getElementById('fTime').value = s.scheduledTime || '12:00';
+    document.getElementById('fReminder').value = s.reminderMinutes || 0;
+    document.getElementById('fStatus').value = s.status;
+    document.getElementById('fAssignee').value = s.assignee || '';
+    document.getElementById('fDescription').value = s.description || '';
+    (s.platforms || []).forEach(pid => {
+      const cb = document.querySelector(`#platformOptions input[value="${pid}"]`);
+      if (cb) cb.checked = true;
+    });
+    btnDel.style.display = '';
+  } else {
+    document.getElementById('modalTitle').textContent = '新建排期';
+    document.getElementById('fTitle').value = '';
+    const d = date || fmtDate(new Date());
+    document.getElementById('fStartDate').value = d;
+    document.getElementById('fEndDate').value = d;
+    document.getElementById('fTime').value = '12:00';
+    document.getElementById('fReminder').value = '30';
+    document.getElementById('fStatus').value = 'pending';
+    document.getElementById('fAssignee').value = '';
+    document.getElementById('fDescription').value = '';
+    btnDel.style.display = 'none';
+  }
+
+  document.getElementById('modalOverlay').classList.add('active');
+  setTimeout(() => document.getElementById('fTitle').focus(), 350);
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  editingId = null;
+}
+
+function saveSchedule() {
+  const title = document.getElementById('fTitle').value.trim();
+  const startDate = document.getElementById('fStartDate').value;
+  const endDate = document.getElementById('fEndDate').value;
+  if (!title) { shakeEl(document.getElementById('fTitle')); return showToast('请输入标题', 'warning'); }
+  if (!startDate) { shakeEl(document.getElementById('fStartDate')); return showToast('请选择开始日期', 'warning'); }
+  if (!endDate) { shakeEl(document.getElementById('fEndDate')); return showToast('请选择结束日期', 'warning'); }
+  if (endDate < startDate) { shakeEl(document.getElementById('fEndDate')); return showToast('结束日期不能早于开始日期', 'warning'); }
+
+  const platforms = [...document.querySelectorAll('#platformOptions input:checked')].map(cb => cb.value);
+  const data = {
+    title, platforms, startDate, endDate,
+    scheduledTime: document.getElementById('fTime').value || '',
+    reminderMinutes: parseInt(document.getElementById('fReminder').value) || 0,
+    status: document.getElementById('fStatus').value,
+    assignee: document.getElementById('fAssignee').value.trim(),
+    description: document.getElementById('fDescription').value.trim(),
+  };
+
+  if (editingId) {
+    const idx = schedules.findIndex(s => s.id === editingId);
+    if (idx > -1) schedules[idx] = { ...schedules[idx], ...data, updatedAt: new Date().toISOString() };
+    showToast('排期已更新', 'success');
+  } else {
+    schedules.push({ id: genId(), ...data, reminded: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+    showToast('排期已创建', 'success');
+  }
+
+  saveData(); closeModal(); renderCalendar();
+}
+
+/* ===== Delete ===== */
+function confirmDelete() { document.getElementById('confirmOverlay').classList.add('active'); }
+function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('active'); }
+function doDelete() {
+  if (!editingId) return;
+  const deleteId = editingId;
+  document.querySelectorAll(`.event-bar[data-id="${deleteId}"]`).forEach(b => b.classList.add('removing'));
+  closeConfirm(); closeModal();
+  setTimeout(() => {
+    schedules = schedules.filter(s => s.id !== deleteId);
+    saveData(); renderCalendar();
+    showToast('排期已删除', 'danger');
+  }, 300);
+}
+
+/* ===== Drag & Drop ===== */
+function onDragStart(e, id) {
+  dragData = id;
+  e.dataTransfer.effectAllowed = 'move';
+  e.target.style.opacity = '0.4';
+  setTimeout(() => { if (e.target) e.target.style.opacity = ''; }, 150);
+}
+function onDragEnter(e) { e.currentTarget.style.background = 'rgba(99,102,241,.08)'; }
+function onDragLeave(e) { e.currentTarget.style.background = ''; }
+function onDrop(e) {
+  e.preventDefault();
+  e.currentTarget.style.background = '';
+  if (!dragData) return;
+  const newDate = e.currentTarget.dataset.date;
+  const ev = schedules.find(s => s.id === dragData);
+  if (ev && newDate) {
+    const dur = daysBetween(ev.startDate, ev.endDate);
+    ev.startDate = newDate;
+    ev.endDate = addDays(newDate, dur);
+    ev.reminded = false;
+    ev.updatedAt = new Date().toISOString();
+    saveData(); renderCalendar();
+    showToast('排期日期已更新', 'success');
+  }
+  dragData = null;
+}
+
+/* ===== Reminders ===== */
+function requestNotificationPermission() {
+  if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+}
+function checkReminders() {
+  const now = new Date();
+  schedules.forEach(s => {
+    if (s.reminded || !s.reminderMinutes || !s.startDate) return;
+    const target = new Date(`${s.startDate}T${s.scheduledTime || '12:00'}:00`);
+    const reminderTime = new Date(target.getTime() - s.reminderMinutes * 60000);
+    if (now >= reminderTime && now <= target) {
+      s.reminded = true; saveData();
+      const mins = s.reminderMinutes >= 1440 ? `${s.reminderMinutes/1440}天` : s.reminderMinutes >= 60 ? `${s.reminderMinutes/60}小时` : `${s.reminderMinutes}分钟`;
+      showToast(`⏰ "${s.title}" 将在${mins}内到期`, 'warning', 8000);
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('营销排期提醒', { body: `"${s.title}" 将在${mins}内到期` });
+      }
+    }
+  });
+}
+
+/* ===== Import / Export ===== */
+function exportData() {
+  if (!schedules.length) return showToast('暂无数据可导出', 'warning');
+  const blob = new Blob([JSON.stringify(schedules, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `营销排期_${fmtDate(new Date())}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('数据已导出', 'success');
+}
+function triggerImport() { document.getElementById('importInput').click(); }
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!Array.isArray(data)) throw new Error();
+      data.forEach(item => {
+        if (!item.id) item.id = genId();
+        item.reminded = false;
+        if (item.scheduledDate && !item.startDate) { item.startDate = item.scheduledDate; item.endDate = item.scheduledDate; delete item.scheduledDate; }
+        if (!item.endDate) item.endDate = item.startDate;
+        if (STATUS_MIGRATE[item.status]) item.status = STATUS_MIGRATE[item.status];
+      });
+      schedules = [...schedules, ...data];
+      saveData(); renderCalendar();
+      showToast(`成功导入 ${data.length} 条排期`, 'success');
+    } catch { showToast('导入失败：文件格式不正确', 'danger'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+/* ===== UI Helpers ===== */
+function renderPlatformOptions() {
+  document.getElementById('platformOptions').innerHTML = PLATFORMS.map(p =>
+    `<div class="platform-option"><input type="checkbox" id="plat_${p.id}" value="${p.id}"><label for="plat_${p.id}"><span class="p-dot" style="background:${p.color}"></span>${p.name}</label></div>`
+  ).join('');
+}
+function renderStatusOptions() {
+  document.getElementById('fStatus').innerHTML = STATUSES.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+}
+function showToast(msg, type = 'info', duration = 3500) {
+  const icons = { info:'ℹ️', success:'✅', warning:'⚠️', danger:'❌' };
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `<span class="toast-icon">${icons[type]||''}</span><span class="toast-text">${msg}</span><span class="toast-close" onclick="this.parentElement.remove()">✕</span>`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(() => { t.classList.add('removing'); setTimeout(() => t.remove(), 300); }, duration);
+}
+function shakeEl(el) {
+  el.style.animation = 'shake .4s';
+  el.addEventListener('animationend', () => el.style.animation = '', { once: true });
+}
+
+/* ===== Events ===== */
+function bindEvents() {
+  document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+  document.getElementById('confirmOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeConfirm(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      if (document.getElementById('confirmOverlay').classList.contains('active')) closeConfirm();
+      else if (document.getElementById('modalOverlay').classList.contains('active')) closeModal();
+    }
+  });
+  document.getElementById('fStartDate').addEventListener('change', function() {
+    const end = document.getElementById('fEndDate');
+    if (end.value < this.value) end.value = this.value;
+  });
+  document.getElementById('calendarBody').addEventListener('click', e => {
+    const cell = e.target.closest('.calendar-cell');
+    if (cell && !e.target.closest('.event-bar') && !e.target.closest('.cell-add-btn')) {
+      const date = cell.dataset.date;
+      if (date && !cell.classList.contains('other-month')) openModal(date);
+    }
+  });
+}
+
+/* ===== Utilities ===== */
+/* ===== Trends ===== */
+function fetchAllTrends() { fetchTrend('douyin'); fetchTrend('weibo'); }
+
+async function fetchTrend(platform) {
+  const container = document.getElementById(platform + 'TrendsBody');
+  const cached = getTrendsCache(platform);
+  if (cached) { renderTrendList(container, cached); updateTrendsTime(); return; }
+  container.innerHTML = '<div class="trends-loading"><div class="spinner"></div><div>加载中…</div></div>';
+  try {
+    const json = await fetchJSON(TREND_APIS[platform]);
+    const items = json.data || json.list || [];
+    if (items.length) {
+      setTrendsCache(platform, items);
+      renderTrendList(container, items);
+      updateTrendsTime();
+    } else { throw new Error('empty'); }
+  } catch {
+    container.innerHTML = `<div class="trends-error">
+      <p>暂时无法获取热搜数据</p>
+      <p style="font-size:.72rem;margin-top:6px;color:var(--text-muted)">请检查网络连接后重试</p>
+      <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="clearTrendsCache('${platform}');fetchTrend('${platform}')">重试</button>
+    </div>`;
+  }
+}
+
+function fetchJSON(url) {
+  return fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+}
+
+function fmtHot(n) {
+  if (typeof n !== 'number') return n || '';
+  if (n >= 10000) return (n / 10000).toFixed(1).replace(/\.0$/, '') + '万';
+  return String(n);
+}
+
+function renderTrendList(container, data) {
+  container.innerHTML = data.slice(0, 25).map((item, i) => {
+    const url = item.url || item.mobileUrl || item.mobilUrl || '#';
+    const title = item.title || item.name || item.word || '';
+    const hot = item.hot || item.hot_value || '';
+    return `<a class="trend-item" href="${url}" target="_blank" rel="noopener">
+      <span class="trend-rank">${i + 1}</span>
+      <span class="trend-title">${esc(title)}</span>
+      ${hot ? `<span class="trend-hot">${fmtHot(hot)}</span>` : ''}
+    </a>`;
+  }).join('');
+}
+
+function getTrendsCache(p) {
+  try { const c = JSON.parse(localStorage.getItem(TRENDS_CACHE_KEY)||'{}');
+    if (c[p] && Date.now()-c[p].t < TRENDS_TTL) return c[p].d;
+  } catch {} return null;
+}
+function setTrendsCache(p, d) {
+  try { const c = JSON.parse(localStorage.getItem(TRENDS_CACHE_KEY)||'{}');
+    c[p] = {d, t:Date.now()}; localStorage.setItem(TRENDS_CACHE_KEY, JSON.stringify(c));
+  } catch {}
+}
+function clearTrendsCache(p) {
+  try { const c = JSON.parse(localStorage.getItem(TRENDS_CACHE_KEY)||'{}');
+    delete c[p]; localStorage.setItem(TRENDS_CACHE_KEY, JSON.stringify(c));
+  } catch {}
+}
+function clearAllTrendsCache() {
+  localStorage.removeItem(TRENDS_CACHE_KEY);
+}
+function updateTrendsTime() {
+  const n = new Date();
+  document.getElementById('trendsTime').textContent =
+    `更新于 ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+}
+
+/* ===== Utilities ===== */
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function fmtDate(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function daysBetween(d1, d2) { return Math.round((new Date(d2) - new Date(d1)) / 86400000); }
+function addDays(dateStr, days) { const d = new Date(dateStr); d.setDate(d.getDate() + days); return fmtDate(d); }
+
+init();
+</script>
+</body>
+</html>
